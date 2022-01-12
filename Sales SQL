@@ -1,9 +1,13 @@
+/* @author Matthew Dong
+* @date 2022/01/11
+*/
+
 CREATE TABLE inventory(
 id INTEGER PRIMARY KEY,
 item TEXT UNIQUE NOT NULL,
 stock INTEGER,
 price FLOAT,
-in_stock BOOLEAN DEFAULT true
+inStock BOOLEAN DEFAULT true
 );
 DROP TABLE IF EXISTS inventory;
 ALTER TABLE inventory ADD in_stock BOOLEAN DEFAULT true;
@@ -18,3 +22,42 @@ INSERT INTO inventory (item,stock,price) VALUES('calculator',24,2.99);
 INSERT INTO inventory (item,stock,price) VALUES('graphing calculator',12,139.99);
 INSERT INTO inventory (item,stock,price) VALUES('tester junk',NULL,NULL);
 END TRANSACTION;
+
+BEGIN TRANSACTION;
+CREATE TABLE purchases(
+id INTEGER PRIMARY KEY,
+customer TEXT,
+itemId INTEGER,
+amount INTEGER,
+totalCost FLOAT
+);
+END TRANSACTION;
+ALTER TABLE purchases ADD amount INTEGER DEFAULT 1;
+DROP TABLE IF EXISTS purchases;
+
+CREATE TABLE customerList(
+id INTEGER PRIMARY KEY,
+name TEXT UNIQUE,
+address TEXT,
+phoneNumber TEXT
+);
+DROP TABLE IF EXISTS customerList;
+
+CREATE TRIGGER addNewCustomer AFTER INSERT ON purchases
+BEGIN 
+SELECT * FROM customerList;
+INSERT INTO customerList (name) VALUES (NEW.customer);
+END;
+
+CREATE TRIGGER updateStock AFTER INSERT ON purchases
+BEGIN 
+UPDATE inventory SET stock=inventory.stock-NEW.amount WHERE NEW.itemId=inventory.id;
+END;
+
+CREATE TRIGGER fillTotalCost AFTER INSERT ON purchases
+BEGIN
+UPDATE purchases SET totalCost=NEW.amount*(SELECT (price) FROM inventory WHERE NEW.itemId=inventory.id);
+END;
+DROP TRIGGER IF EXISTS fillTotalCost;
+
+INSERT INTO purchases (customer,itemId,amount) VALUES('John Smith',1,2);
