@@ -1,0 +1,20 @@
+CREATE TABLE inventory(
+id INTEGER PRIMARY KEY,
+item TEXT UNIQUE NOT NULL,
+stock INTEGER,
+price FLOAT,
+in_stock BOOLEAN DEFAULT true
+);
+DROP TABLE IF EXISTS inventory;
+ALTER TABLE inventory ADD in_stock BOOLEAN DEFAULT true;
+
+BEGIN TRANSACTION;
+INSERT INTO inventory (item,stock,price) VALUES('stapler',20,19.99);
+INSERT INTO inventory (item,stock,price) VALUES('paper',50,7.99);
+INSERT INTO inventory (item,stock,price) VALUES('laptop',4,699.99);
+INSERT INTO inventory (item,stock,price) VALUES('scissors',45,1.99);
+INSERT INTO inventory (item,stock,price) VALUES('plastic cup',50,7.99);
+INSERT INTO inventory (item,stock,price) VALUES('calculator',24,2.99);
+INSERT INTO inventory (item,stock,price) VALUES('graphing calculator',12,139.99);
+INSERT INTO inventory (item,stock,price) VALUES('tester junk',NULL,NULL);
+END TRANSACTION;
