@@ -43,13 +43,6 @@ phoneNumber TEXT
 );
 DROP TABLE IF EXISTS customerList;
 
-CREATE TRIGGER addNewCustomer AFTER INSERT ON purchases
-BEGIN 
-IF (SELECT * FROM customerList IS NOT NULL)
-INSERT INTO customerList (name) VALUES (NEW.customer);
-ELSE
-END;
-
 CREATE TRIGGER updateStock AFTER INSERT ON purchases
 BEGIN 
 UPDATE inventory SET stock=inventory.stock-NEW.amount WHERE NEW.itemId=inventory.id;
